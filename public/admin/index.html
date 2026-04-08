@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>VerityLights — Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;1,400&family=Raleway:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Raleway',sans-serif;background:#1a1512;color:#e8d5b5;min-height:100vh}
+/* Login */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:2rem}
+.login-box{background:#110e0a;border:1px solid rgba(196,169,125,.18);border-radius:6px;padding:3rem;width:100%;max-width:380px}
+.login-brand{font-family:'Playfair Display',serif;font-size:1.6rem;color:#e8d5b5;margin-bottom:.3rem}
+.login-brand span{color:#c4a97d;font-style:italic}
+.login-sub{font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,169,125,.4);margin-bottom:2.5rem}
+.login-label{font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(196,169,125,.5);display:block;margin-bottom:.4rem;margin-top:1.2rem}
+.login-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(196,169,125,.18);color:#e8d5b5;padding:.75rem 1rem;font-family:'Raleway',sans-serif;font-size:.85rem;outline:none;border-radius:3px;transition:border-color .25s}
+.login-input:focus{border-color:rgba(196,169,125,.5)}
+.login-btn{width:100%;background:#7a5c3e;color:#faf6ef;border:none;padding:.9rem;font-family:'Raleway',sans-serif;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;border-radius:3px;margin-top:1.5rem;transition:background .25s}
+.login-btn:hover{background:#c4a97d;color:#1c1812}
+.login-err{font-size:.78rem;color:#b04a3a;margin-top:.8rem;text-align:center;min-height:1.2em}
+/* Main UI */
+.app{display:flex;flex-direction:column;min-height:100vh}
+.top-bar{display:flex;align-items:center;justify-content:space-between;padding:.9rem 2rem;background:#110e0a;border-bottom:1px solid rgba(196,169,125,.15);flex-shrink:0}
+.top-brand{font-family:'Playfair Display',serif;font-size:1.1rem;color:#e8d5b5}
+.top-brand span{color:#c4a97d;font-style:italic}
+.top-right{display:flex;align-items:center;gap:1rem}
+.top-link{font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:rgba(196,169,125,.5);cursor:pointer;text-decoration:none;transition:color .2s}
+.top-link:hover{color:#c4a97d}
+.tab-bar{display:flex;background:#110e0a;border-bottom:1px solid rgba(196,169,125,.12);flex-shrink:0;flex-wrap:wrap}
+.tab{padding:.7rem 1.2rem;font-size:.67rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;color:rgba(196,169,125,.4);border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap}
+.tab.active{color:#c4a97d;border-bottom-color:#c4a97d}
+.tab:hover:not(.active){color:rgba(196,169,125,.7)}
+.panel{display:none;padding:2rem;overflow:auto;flex:1}
+.panel.active{display:block}
+/* Fields */
+.sec-title{font-family:'Playfair Display',serif;font-size:1.1rem;color:#e8d5b5;margin-bottom:1.5rem;padding-bottom:.6rem;border-bottom:1px solid rgba(196,169,125,.18)}
+.sec-sub{font-size:.78rem;color:rgba(196,169,125,.45);margin-bottom:1.2rem;line-height:1.8}
+.field{margin-bottom:1rem}
+.field label{display:block;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(196,169,125,.5);margin-bottom:.4rem}
+.field input,.field select,.field textarea{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(196,169,125,.18);color:#e8d5b5;padding:.65rem .85rem;font-family:'Raleway',sans-serif;font-size:.85rem;font-weight:300;outline:none;border-radius:3px;transition:border-color .25s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:rgba(196,169,125,.4)}
+.field select option{background:#1a1512}
+.field textarea{resize:vertical;min-height:70px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem}
+.section-divider{border:none;border-top:1px solid rgba(196,169,125,.1);margin:1.8rem 0}
+/* Buttons */
+.btn{display:inline-block;padding:.6rem 1.4rem;font-family:'Raleway',sans-serif;font-size:.72rem;letter-spacing:.15em;text-transform:uppercase;cursor:pointer;border-radius:3px;transition:all .25s;border:none}
+.btn-primary{background:#7a5c3e;color:#faf6ef}.btn-primary:hover{background:#c4a97d;color:#1c1812}
+.btn-secondary{background:rgba(196,169,125,.1);border:1px solid rgba(196,169,125,.25);color:#c4a97d}.btn-secondary:hover{background:rgba(196,169,125,.2)}
+.btn-danger{background:rgba(180,70,60,.15);border:1px solid rgba(180,70,60,.3);color:#e07a70}.btn-danger:hover{background:rgba(180,70,60,.3)}
+.btn-row{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:1.2rem}
+/* Products */
+.prod-card{background:rgba(255,255,255,.03);border:1px solid rgba(196,169,125,.13);border-radius:4px;padding:1.1rem;margin-bottom:1rem}
+.prod-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.9rem;cursor:pointer;user-select:none}
+.prod-name-label{font-family:'Playfair Display',serif;font-size:.95rem;color:#c4a97d}
+.prod-toggle{font-size:1.1rem;color:rgba(196,169,125,.5);transition:transform .25s}
+.prod-card.collapsed .prod-body{display:none}
+.prod-card.collapsed .prod-toggle{transform:rotate(-90deg)}
+.prod-actions{display:flex;gap:.5rem}
+/* Image upload */
+.img-upload-area{border:1px dashed rgba(196,169,125,.3);border-radius:4px;padding:1.2rem;text-align:center;cursor:pointer;transition:border-color .25s;position:relative;overflow:hidden}
+.img-upload-area:hover{border-color:rgba(196,169,125,.6)}
+.img-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-upload-area .upload-hint{font-size:.72rem;letter-spacing:.1em;color:rgba(196,169,125,.45)}
+.img-preview{width:80px;height:80px;object-fit:cover;border-radius:3px;border:1px solid rgba(196,169,125,.25);margin-top:.6rem}
+/* Orders */
+.order-row{display:grid;grid-template-columns:auto 1fr 1fr 1fr auto;gap:1rem;align-items:center;padding:.9rem 1rem;border-bottom:1px solid rgba(196,169,125,.1);font-size:.82rem}
+.order-row:hover{background:rgba(196,169,125,.04)}
+.order-id{font-family:'Playfair Display',serif;color:#c4a97d;font-size:.85rem}
+.order-status{display:inline-block;padding:.18rem .6rem;border-radius:3px;font-size:.6rem;letter-spacing:.12em;text-transform:uppercase}
+.status-paid{background:rgba(74,124,89,.2);color:#7aba94;border:1px solid rgba(74,124,89,.3)}
+.status-pending{background:rgba(196,169,125,.1);color:#c4a97d;border:1px solid rgba(196,169,125,.2)}
+/* Colors */
+.swatch-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;margin-bottom:1.5rem}
+.swatch-card{background:rgba(255,255,255,.03);border:1px solid rgba(196,169,125,.13);border-radius:4px;padding:.9rem}
+.swatch-preview{height:36px;border-radius:3px;margin-bottom:.6rem;border:1px solid rgba(0,0,0,.15)}
+.swatch-name{font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(196,169,125,.5);margin-bottom:.4rem}
+.color-row{display:flex;align-items:center;gap:.6rem}
+.color-row input[type=color]{width:38px;height:34px;border:1px solid rgba(196,169,125,.18);background:none;border-radius:3px;cursor:pointer;padding:2px}
+.color-row .hex-in{flex:1}
+/* Discount codes */
+.dc-row{display:grid;grid-template-columns:1fr auto auto;gap:.8rem;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(196,169,125,.1)}
+/* Info box */
+.info-box{background:rgba(196,169,125,.07);border:1px solid rgba(196,169,125,.15);border-radius:3px;padding:.6rem .9rem;font-size:.75rem;color:rgba(196,169,125,.6);line-height:1.7;margin-bottom:1rem}
+/* Toast */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(60px);background:#3d3020;color:#e8d5b5;padding:.7rem 1.8rem;font-size:.78rem;letter-spacing:.1em;border-left:3px solid #c4a97d;z-index:9999;transition:transform .35s;white-space:nowrap;pointer-events:none}
+.toast.show{transform:translateX(-50%) translateY(0)}
+/* Status bar */
+.status-bar{background:#110e0a;border-top:1px solid rgba(196,169,125,.12);padding:.6rem 2rem;display:flex;justify-content:space-between;align-items:center;flex-shrink:0;font-size:.7rem;color:rgba(196,169,125,.4);letter-spacing:.1em}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#6ab87a;display:inline-block;margin-right:.5rem}
+</style>
+</head>
+<body>
+
+<!-- ── Login Screen ── -->
+<div id="loginScreen" class="login-wrap">
+  <div class="login-box">
+    <div class="login-brand">Verity<span>Lights</span></div>
+    <div class="login-sub">Admin Portal</div>
+    <label class="login-label">Password</label>
+    <input class="login-input" type="password" id="loginPwd" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')login()">
+    <button class="login-btn" onclick="login()">Sign In</button>
+    <div class="login-err" id="loginErr"></div>
+  </div>
+</div>
+
+<!-- ── Main App ── -->
+<div id="mainApp" class="app" style="display:none">
+  <div class="top-bar">
+    <div class="top-brand">Verity<span>Lights</span> <span style="font-family:'Raleway',sans-serif;font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(196,169,125,.4);margin-left:.5rem">Admin</span></div>
+    <div class="top-right">
+      <a class="top-link" href="/" target="_blank">View Site ↗</a>
+      <span class="top-link" onclick="logout()">Sign Out</span>
+    </div>
+  </div>
+
+  <div class="tab-bar">
+    <div class="tab active" onclick="switchTab('products')">◇ Products</div>
+    <div class="tab" onclick="switchTab('content')">◆ Content</div>
+    <div class="tab" onclick="switchTab('colors')">◉ Colors</div>
+    <div class="tab" onclick="switchTab('settings')">⚙ Settings</div>
+    <div class="tab" onclick="switchTab('orders')">✦ Orders</div>
+  </div>
+
+  <!-- PRODUCTS -->
+  <div class="panel active" id="panel-products">
+    <div class="sec-title">Product Catalog</div>
+    <div id="prodList"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="addNewProduct()">+ Add Product</button>
+    </div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="panel" id="panel-content">
+    <div class="sec-title">Hero Section</div>
+    <div class="field"><label>Eyebrow</label><input type="text" id="c-heroEyebrow"></div>
+    <div class="field"><label>Title (wrap italic words in |pipes|)</label><input type="text" id="c-heroTitle"></div>
+    <div class="field"><label>Description</label><textarea id="c-heroDesc"></textarea></div>
+    <div class="grid-2">
+      <div class="field"><label>Primary Button</label><input type="text" id="c-heroBtnPrimary"></div>
+      <div class="field"><label>Secondary Button</label><input type="text" id="c-heroBtnSecondary"></div>
+    </div>
+    <hr class="section-divider">
+    <div class="sec-title">Shop Section</div>
+    <div class="grid-2">
+      <div class="field"><label>Label</label><input type="text" id="c-shopLabel"></div>
+      <div class="field"><label>Title (use |pipes| for italic)</label><input type="text" id="c-shopTitle"></div>
+    </div>
+    <hr class="section-divider">
+    <div class="sec-title">Commission Banner</div>
+    <div class="field"><label>Label</label><input type="text" id="c-craftLabel"></div>
+    <div class="field"><label>Title</label><input type="text" id="c-craftTitle"></div>
+    <div class="field"><label>Body Text</label><textarea id="c-craftBody"></textarea></div>
+    <div class="field"><label>Button Text</label><input type="text" id="c-craftBtn"></div>
+    <hr class="section-divider">
+    <div class="sec-title">Our Story</div>
+    <div class="field"><label>Label</label><input type="text" id="c-aboutLabel"></div>
+    <div class="field"><label>Title</label><input type="text" id="c-aboutTitle"></div>
+    <div class="field"><label>Paragraph 1</label><textarea id="c-aboutP1"></textarea></div>
+    <div class="field"><label>Paragraph 2</label><textarea id="c-aboutP2"></textarea></div>
+    <div class="grid-3">
+      <div class="field"><label>Stat 1 Number</label><input type="text" id="c-stat1num"></div>
+      <div class="field"><label>Stat 2 Number</label><input type="text" id="c-stat2num"></div>
+      <div class="field"><label>Stat 3 Number</label><input type="text" id="c-stat3num"></div>
+    </div>
+    <div class="grid-3">
+      <div class="field"><label>Stat 1 Label</label><input type="text" id="c-stat1label"></div>
+      <div class="field"><label>Stat 2 Label</label><input type="text" id="c-stat2label"></div>
+      <div class="field"><label>Stat 3 Label</label><input type="text" id="c-stat3label"></div>
+    </div>
+    <hr class="section-divider">
+    <div class="sec-title">Contact Info</div>
+    <div class="grid-2">
+      <div class="field"><label>Address</label><textarea id="c-contactAddress"></textarea></div>
+      <div class="field"><label>Hours</label><textarea id="c-contactHours"></textarea></div>
+    </div>
+    <div class="grid-2">
+      <div class="field"><label>Email</label><input type="text" id="c-contactEmail"></div>
+      <div class="field"><label>Phone</label><input type="text" id="c-contactPhone"></div>
+    </div>
+    <hr class="section-divider">
+    <div class="sec-title">Brand & Footer</div>
+    <div class="grid-2">
+      <div class="field"><label>Brand Name (first part)</label><input type="text" id="c-brandMain"></div>
+      <div class="field"><label>Brand Name (italic part)</label><input type="text" id="c-brandItalic"></div>
+    </div>
+    <div class="field"><label>Tagline</label><input type="text" id="c-brandTagline"></div>
+    <div class="field"><label>Footer About Text</label><textarea id="c-footerAbout"></textarea></div>
+    <div class="field"><label>Copyright</label><input type="text" id="c-copyright"></div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveContent()">Save Changes</button>
+    </div>
+  </div>
+
+  <!-- COLORS -->
+  <div class="panel" id="panel-colors">
+    <div class="sec-title">Brand Colors</div>
+    <p class="sec-sub">Changes apply to the live site immediately after saving.</p>
+    <div class="swatch-grid" id="swatchGrid"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="resetColors()">Reset to Defaults</button>
+      <button class="btn btn-primary" onclick="saveColors()">Save Colors</button>
+    </div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="panel" id="panel-settings">
+    <div class="sec-title">Shipping</div>
+    <div class="grid-2">
+      <div class="field"><label>Free Shipping Above ($)</label><input type="number" id="s-freeThreshold" value="120"></div>
+      <div class="field"><label>Standard Shipping Cost ($)</label><input type="number" id="s-shipCost" value="12"></div>
+    </div>
+    <hr class="section-divider">
+    <div class="sec-title">Discount Codes</div>
+    <p class="sec-sub">Percentage discounts only. Customers enter these at checkout.</p>
+    <div id="discountList"></div>
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="addDiscountCode()">+ Add Code</button>
+      <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+    </div>
+    <hr class="section-divider">
+    <div class="sec-title">Admin Password</div>
+    <p class="sec-sub">To change the password, update the <code style="background:rgba(196,169,125,.1);padding:1px 5px;border-radius:2px">ADMIN_PASSWORD</code> environment variable on your hosting platform and redeploy.</p>
+  </div>
+
+  <!-- ORDERS -->
+  <div class="panel" id="panel-orders">
+    <div class="sec-title">Recent Orders</div>
+    <div id="ordersList"></div>
+  </div>
+
+  <div class="status-bar">
+    <span><span class="status-dot"></span>VerityLights Admin</span>
+    <span id="saveStatus" style="color:rgba(196,169,125,.5)"></span>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+let token = localStorage.getItem('vl-admin-token') || '';
+let discountCodes = [];
+let colors = {ink:'#1c1812',bark:'#3d3020',clay:'#7a5c3e',sand:'#c4a97d',warm:'#e8d5b5',parchment:'#f4ede0',cream:'#faf6ef',moss:'#4a5240',sage:'#8a9478'};
+const colorLabels = {ink:'Ink (darkest text)',bark:'Bark (headings)',clay:'Clay (accents)',sand:'Sand (highlights)',warm:'Warm (fills)',parchment:'Parchment (alt bg)',cream:'Cream (main bg)',moss:'Moss (dark banner)',sage:'Sage (muted text)'};
+
+// ── Auth ─────────────────────────────────────────────────────────────
+async function login() {
+  const pwd = document.getElementById('loginPwd').value;
+  const err = document.getElementById('loginErr');
+  err.textContent = '';
+  try {
+    const r = await fetch('/api/auth/login', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ password: pwd })
+    });
+    const d = await r.json();
+    if(!r.ok) { err.textContent = d.error || 'Wrong password'; return; }
+    token = d.token;
+    localStorage.setItem('vl-admin-token', token);
+    showApp();
+  } catch(e) { err.textContent = 'Connection error'; }
+}
+
+function logout() {
+  localStorage.removeItem('vl-admin-token');
+  token = '';
+  document.getElementById('mainApp').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+}
+
+function authHeaders() { return { 'Authorization': 'Bearer ' + token, 'Content-Type': 'application/json' }; }
+
+async function showApp() {
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('mainApp').style.display = 'flex';
+  await Promise.all([loadProducts(), loadContent(), loadSettings(), loadOrders()]);
+}
+
+// Auto-login if token stored
+window.addEventListener('DOMContentLoaded', async () => {
+  if(token) {
+    // verify token by calling a protected endpoint
+    try {
+      const r = await fetch('/api/orders', { headers: { 'Authorization': 'Bearer ' + token } });
+      if(r.ok) { showApp(); return; }
+    } catch(e) {}
+    token = '';
+    localStorage.removeItem('vl-admin-token');
+  }
+});
+
+// ── Tabs ──────────────────────────────────────────────────────────────
+function switchTab(t) {
+  document.querySelectorAll('.tab').forEach(e => e.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(e => e.classList.remove('active'));
+  document.querySelector(`.tab[onclick="switchTab('${t}')"]`).classList.add('active');
+  document.getElementById('panel-' + t).classList.add('active');
+}
+
+// ── Products ──────────────────────────────────────────────────────────
+async function loadProducts() {
+  const r = await fetch('/api/products/admin/all', { headers: authHeaders() });
+  const products = await r.json();
+  renderProducts(products);
+}
+
+function renderProducts(products) {
+  const list = document.getElementById('prodList');
+  list.innerHTML = '';
+  products.forEach(p => list.appendChild(buildProductCard(p)));
+}
+
+function buildProductCard(p) {
+  const card = document.createElement('div');
+  card.className = 'prod-card';
+  card.id = 'pc-' + p.id;
+  const imgPreview = p.image_url ? `<img src="${p.image_url}" alt="${p.name}" class="img-preview">` : '';
+  card.innerHTML = `
+    <div class="prod-header" onclick="this.closest('.prod-card').classList.toggle('collapsed')">
+      <span class="prod-name-label">${p.name} — <span style="font-family:'Raleway',sans-serif;font-size:.75rem;color:rgba(196,169,125,.4)">$${parseFloat(p.price).toFixed(0)} · ${p.category}</span></span>
+      <div class="prod-actions">
+        <button class="btn btn-danger" style="padding:.3rem .7rem;font-size:.62rem" onclick="event.stopPropagation();deleteProduct(${p.id})">Delete</button>
+        <span class="prod-toggle">▾</span>
+      </div>
+    </div>
+    <div class="prod-body">
+      <div class="grid-2">
+        <div class="field"><label>Name</label><input type="text" value="${esc(p.name)}" onchange="pField(${p.id},'name',this.value)"></div>
+        <div class="field"><label>Material</label><input type="text" value="${esc(p.material)}" onchange="pField(${p.id},'material',this.value)"></div>
+      </div>
+      <div class="grid-3">
+        <div class="field"><label>Price ($)</label><input type="number" value="${p.price}" onchange="pField(${p.id},'price',this.value)"></div>
+        <div class="field"><label>Category</label>
+          <select onchange="pField(${p.id},'category',this.value)">
+            ${['rings','necklaces','bracelets','earrings','sets'].map(c=>`<option${c===p.category?' selected':''}>${c}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field"><label>Badge</label>
+          <select onchange="pField(${p.id},'badge',this.value)">
+            ${['','Bestseller','New','Limited'].map(b=>`<option value="${b}"${b===p.badge?' selected':''}>${b||'(none)'}</option>`).join('')}
+          </select>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label>In Stock</label>
+          <select onchange="pField(${p.id},'in_stock',this.value)">
+            <option value="1"${p.in_stock?' selected':''}>Yes</option>
+            <option value="0"${!p.in_stock?' selected':''}>No (hidden)</option>
+          </select>
+        </div>
+        <div class="field"><label>Sort Order</label><input type="number" value="${p.sort_order||0}" onchange="pField(${p.id},'sort_order',this.value)"></div>
+      </div>
+      <div class="field"><label>Description (optional)</label><textarea onchange="pField(${p.id},'description',this.value)">${esc(p.description||'')}</textarea></div>
+      <div class="field"><label>Product Image</label>
+        <div class="img-upload-area">
+          <input type="file" accept="image/*" onchange="uploadProductImage(${p.id},this)">
+          <div class="upload-hint">Click to upload photo (max 5MB)</div>
+        </div>
+        <div id="img-prev-${p.id}">${imgPreview}</div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="saveProduct(${p.id})">Save Product</button>
+      </div>
+    </div>`;
+  return card;
+}
+
+// Temporary local edits before saving
+const pendingEdits = {};
+function pField(id, key, val) {
+  if(!pendingEdits[id]) pendingEdits[id] = {};
+  pendingEdits[id][key] = val;
+}
+
+async function saveProduct(id) {
+  const card = document.getElementById('pc-' + id);
+  const inputs = {};
+  card.querySelectorAll('input[type=text],input[type=number],select,textarea').forEach(el => {
+    const name = el.getAttribute('onchange')?.match(/'(\w+)'/)?.[1];
+    if(name) inputs[name] = el.value;
+  });
+  try {
+    const r = await fetch(`/api/products/${id}`, {
+      method: 'PUT',
+      headers: authHeaders(),
+      body: JSON.stringify(inputs)
+    });
+    if(!r.ok) throw new Error((await r.json()).error);
+    showToast('Product saved');
+    // Update card title
+    const nameInput = card.querySelector('input[type=text]');
+    const nameLabel = card.querySelector('.prod-name-label');
+    if(nameInput && nameLabel) nameLabel.textContent = nameInput.value;
+  } catch(e) { showToast('Error: ' + e.message); }
+}
+
+async function uploadProductImage(id, input) {
+  const file = input.files[0];
+  if(!file) return;
+  const formData = new FormData();
+  formData.append('image', file);
+  // Copy current product fields too
+  const card = document.getElementById('pc-' + id);
+  card.querySelectorAll('input[type=text],input[type=number],select,textarea').forEach(el => {
+    const name = el.getAttribute('onchange')?.match(/'(\w+)'/)?.[1];
+    if(name) formData.append(name, el.value);
+  });
+  try {
+    const r = await fetch(`/api/products/${id}`, {
+      method: 'PUT',
+      headers: { 'Authorization': 'Bearer ' + token },
+      body: formData
+    });
+    if(!r.ok) throw new Error((await r.json()).error);
+    showToast('Image uploaded');
+    // Preview
+    const reader = new FileReader();
+    reader.onload = e => {
+      document.getElementById(`img-prev-${id}`).innerHTML = `<img src="${e.target.result}" class="img-preview">`;
+    };
+    reader.readAsDataURL(file);
+  } catch(e) { showToast('Upload failed: ' + e.message); }
+}
+
+async function deleteProduct(id) {
+  if(!confirm('Delete this product? This cannot be undone.')) return;
+  try {
+    const r = await fetch(`/api/products/${id}`, { method:'DELETE', headers: authHeaders() });
+    if(!r.ok) throw new Error((await r.json()).error);
+    document.getElementById('pc-' + id)?.remove();
+    showToast('Product deleted');
+  } catch(e) { showToast('Error: ' + e.message); }
+}
+
+async function addNewProduct() {
+  try {
+    const r = await fetch('/api/products', {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ name: 'New Piece', price: 0, material: '', category: 'rings', badge: '', description: '', in_stock: 1, sort_order: 99 })
+    });
+    const d = await r.json();
+    if(!r.ok) throw new Error(d.error);
+    const newP = { id: d.id, name: 'New Piece', price: 0, material: '', category: 'rings', badge: '', description: '', in_stock: 1, sort_order: 99, image_url: '' };
+    const card = buildProductCard(newP);
+    document.getElementById('prodList').appendChild(card);
+    card.scrollIntoView({ behavior: 'smooth' });
+    showToast('New product added — fill in details and save');
+  } catch(e) { showToast('Error: ' + e.message); }
+}
+
+// ── Content ───────────────────────────────────────────────────────────
+const contentFields = ['heroEyebrow','heroTitle','heroDesc','heroBtnPrimary','heroBtnSecondary','shopLabel','shopTitle','craftLabel','craftTitle','craftBody','craftBtn','aboutLabel','aboutTitle','aboutP1','aboutP2','stat1num','stat1label','stat2num','stat2label','stat3num','stat3label','contactAddress','contactHours','contactEmail','contactPhone','brandMain','brandItalic','brandTagline','footerAbout','copyright'];
+
+async function loadContent() {
+  const r = await fetch('/api/content', { headers: authHeaders() });
+  const c = await r.json();
+  contentFields.forEach(k => {
+    const el = document.getElementById('c-' + k);
+    if(el && c[k] !== undefined) el.value = c[k];
+  });
+  if(c.colors) {
+    try { Object.assign(colors, JSON.parse(c.colors)); } catch(e) {}
+    buildSwatches();
+  } else {
+    buildSwatches();
+  }
+}
+
+async function saveContent() {
+  const data = {};
+  contentFields.forEach(k => {
+    const el = document.getElementById('c-' + k);
+    if(el) data[k] = el.value;
+  });
+  try {
+    const r = await fetch('/api/content', { method:'PUT', headers: authHeaders(), body: JSON.stringify(data) });
+    if(!r.ok) throw new Error((await r.json()).error);
+    showToast('Content saved — live on site');
+  } catch(e) { showToast('Error: ' + e.message); }
+}
+
+// ── Colors ────────────────────────────────────────────────────────────
+function buildSwatches() {
+  const g = document.getElementById('swatchGrid');
+  g.innerHTML = '';
+  Object.entries(colors).forEach(([k, v]) => {
+    g.innerHTML += `<div class="swatch-card">
+      <div class="swatch-preview" style="background:${v}" id="sw-p-${k}"></div>
+      <div class="swatch-name">${colorLabels[k] || k}</div>
+      <div class="color-row">
+        <input type="color" value="${v}" oninput="updateColor('${k}',this.value)" id="sw-c-${k}">
+        <input type="text" class="hex-in" style="background:rgba(255,255,255,.04);border:1px solid rgba(196,169,125,.18);color:#e8d5b5;padding:.4rem .6rem;font-size:.8rem;border-radius:3px;outline:none;width:100%" value="${v}" oninput="updateColorHex('${k}',this.value)" id="sw-h-${k}">
+      </div>
+    </div>`;
+  });
+}
+
+function updateColor(k, v) {
+  colors[k] = v;
+  document.getElementById('sw-h-' + k).value = v;
+  document.getElementById('sw-p-' + k).style.background = v;
+}
+
+function updateColorHex(k, v) {
+  if(/^#[0-9a-fA-F]{6}$/.test(v)) {
+    colors[k] = v;
+    document.getElementById('sw-c-' + k).value = v;
+    document.getElementById('sw-p-' + k).style.background = v;
+  }
+}
+
+function resetColors() {
+  Object.assign(colors, {ink:'#1c1812',bark:'#3d3020',clay:'#7a5c3e',sand:'#c4a97d',warm:'#e8d5b5',parchment:'#f4ede0',cream:'#faf6ef',moss:'#4a5240',sage:'#8a9478'});
+  buildSwatches();
+  showToast('Colors reset to defaults');
+}
+
+async function saveColors() {
+  const data = { colors: JSON.stringify(colors) };
+  try {
+    const r = await fetch('/api/content', { method:'PUT', headers: authHeaders(), body: JSON.stringify(data) });
+    if(!r.ok) throw new Error((await r.json()).error);
+    showToast('Colors saved — live on site');
+  } catch(e) { showToast('Error: ' + e.message); }
+}
+
+// ── Settings ──────────────────────────────────────────────────────────
+async function loadSettings() {
+  try {
+    const r = await fetch('/api/content/settings', { headers: authHeaders() });
+    const s = await r.json();
+    if(s.freeShippingThreshold) document.getElementById('s-freeThreshold').value = s.freeShippingThreshold;
+    if(s.shippingCost) document.getElementById('s-shipCost').value = s.shippingCost;
+    discountCodes = s.discountCodes ? JSON.parse(s.discountCodes) : [];
+    renderDiscountCodes();
+  } catch(e) {}
+}
+
+function renderDiscountCodes() {
+  const list = document.getElementById('discountList');
+  list.innerHTML = '';
+  discountCodes.forEach((dc, i) => {
+    const row = document.createElement('div');
+    row.className = 'dc-row';
+    row.innerHTML = `
+      <input type="text" value="${esc(dc.code)}" placeholder="CODE" style="background:rgba(255,255,255,.04);border:1px solid rgba(196,169,125,.18);color:#e8d5b5;padding:.5rem .8rem;font-family:'Raleway',sans-serif;font-size:.82rem;border-radius:3px;outline:none;text-transform:uppercase" oninput="discountCodes[${i}].code=this.value.toUpperCase()">
+      <div style="display:flex;align-items:center;gap:.4rem">
+        <input type="number" value="${dc.percent}" min="1" max="100" style="width:70px;background:rgba(255,255,255,.04);border:1px solid rgba(196,169,125,.18);color:#e8d5b5;padding:.5rem .6rem;font-family:'Raleway',sans-serif;font-size:.82rem;border-radius:3px;outline:none" oninput="discountCodes[${i}].percent=parseInt(this.value)||0">
+        <span style="font-size:.72rem;color:rgba(196,169,125,.4)">%</span>
+      </div>
+      <button class="btn btn-danger" style="padding:.3rem .7rem;font-size:.62rem" onclick="discountCodes.splice(${i},1);renderDiscountCodes()">✕</button>`;
+    list.appendChild(row);
+  });
+}
+
+function addDiscountCode() {
+  discountCodes.push({ code: 'CODE' + (discountCodes.length+1), percent: 10 });
+  renderDiscountCodes();
+}
+
+async function saveSettings() {
+  const data = {
+    freeShippingThreshold: document.getElementById('s-freeThreshold').value,
+    shippingCost: document.getElementById('s-shipCost').value,
+    discountCodes: JSON.stringify(discountCodes)
+  };
+  try {
+    const r = await fetch('/api/content/settings', { method:'PUT', headers: authHeaders(), body: JSON.stringify(data) });
+    if(!r.ok) throw new Error((await r.json()).error);
+    showToast('Settings saved');
+  } catch(e) { showToast('Error: ' + e.message); }
+}
+
+// ── Orders ────────────────────────────────────────────────────────────
+async function loadOrders() {
+  try {
+    const r = await fetch('/api/orders', { headers: authHeaders() });
+    const orders = await r.json();
+    const list = document.getElementById('ordersList');
+    if(!orders.length) {
+      list.innerHTML = '<div style="text-align:center;padding:3rem;font-family:\'Playfair Display\',serif;font-style:italic;color:rgba(196,169,125,.35)">No orders yet</div>';
+      return;
+    }
+    list.innerHTML = `
+      <div class="order-row" style="font-size:.62rem;letter-spacing:.15em;text-transform:uppercase;color:rgba(196,169,125,.4);padding-bottom:.5rem">
+        <span>Date</span><span>Customer</span><span>Items</span><span>Total</span><span>Status</span>
+      </div>
+      ${orders.map(o => `
+        <div class="order-row">
+          <span style="color:rgba(196,169,125,.5);font-size:.78rem">${new Date(o.created_at).toLocaleDateString()}</span>
+          <span><div style="font-size:.85rem;color:#e8d5b5">${esc(o.customer_name||'—')}</div><div style="font-size:.72rem;color:rgba(196,169,125,.4)">${esc(o.customer_email||'')}</div></span>
+          <span style="font-size:.78rem;color:rgba(196,169,125,.6)">${(o.items||[]).map(i=>i.name).join(', ')}</span>
+          <span class="order-id">$${parseFloat(o.total||0).toFixed(2)}</span>
+          <span><span class="order-status status-${o.status||'paid'}">${o.status||'paid'}</span></span>
+        </div>`).join('')}`;
+  } catch(e) { document.getElementById('ordersList').innerHTML = '<div style="color:rgba(196,169,125,.4);padding:1rem">Could not load orders</div>'; }
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+  document.getElementById('saveStatus').textContent = msg;
+  setTimeout(() => document.getElementById('saveStatus').textContent = '', 5000);
+}
+</script>
+</body>
+</html>
