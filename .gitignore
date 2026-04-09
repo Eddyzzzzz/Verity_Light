@@ -4,3 +4,4 @@ data/
 .claude/
 .vscode/
 .env
+.env.example
