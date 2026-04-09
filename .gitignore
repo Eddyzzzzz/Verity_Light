@@ -1,9 +1,5 @@
 node_modules/
-.env
 data/
 *.sqlite
 .claude/
 .vscode/
-README.md
-verity_editor (5).html
-index.html
